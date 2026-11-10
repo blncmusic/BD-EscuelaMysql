@@ -52,7 +52,7 @@ El proyecto utiliza una organización basada en el patrón DAO (Data Access Obje
 
 También incorpora una estructura inspirada en MVC (Modelo-Vista-Controlador) en el módulo de alumnos, separando las responsabilidades de representación, control y acceso a datos.
 
-Se aplican conceptos de programación orientada a objetos, como encapsulamiento, herencia, abstracción y polimorfismo.
+Se aplican conceptos fundamentales de la programación orientada a objetos, como el encapsulamiento, la herencia y la abstracción. El encapsulamiento se utiliza para proteger los atributos de las clases y controlar su acceso mediante métodos getters y setters. La herencia se implementa mediante la clase abstracta Persona, de la cual derivan Chofer y Docente, compartiendo atributos y comportamientos comunes. La abstracción permite representar características generales de las personas y reutilizarlas en las clases específicas del sistema.
 
 ## Base de datos
 
