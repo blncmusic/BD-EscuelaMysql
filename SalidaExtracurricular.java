@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class SalidaExtracurricular {
+
+    private int id;
     private String destino;
     private Date fecha;
     private Chofer chofer;
@@ -11,15 +13,31 @@ public class SalidaExtracurricular {
     private ArrayList<Alumno> alumnos;
 
     public SalidaExtracurricular() {
-        this.alumnos = new ArrayList<>(); // Constructor vacío
+        this.alumnos = new ArrayList<>();
     }
 
-    public SalidaExtracurricular(String destino, Date fecha, Chofer chofer, Docente docenteSalida, ArrayList<Alumno> alumnos) {
+    public SalidaExtracurricular(
+            int id,
+            String destino,
+            Date fecha,
+            Chofer chofer,
+            Docente docenteSalida,
+            ArrayList<Alumno> alumnos) {
+
+        this.id = id;
         this.destino = destino;
         this.fecha = fecha;
         this.chofer = chofer;
         this.docenteSalida = docenteSalida;
-        this.alumnos = alumnos;
+        this.alumnos = alumnos != null ? alumnos : new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDestino() {
@@ -59,57 +77,89 @@ public class SalidaExtracurricular {
     }
 
     public void setAlumnos(ArrayList<Alumno> alumnos) {
-        this.alumnos = alumnos;
+        this.alumnos = alumnos != null ? alumnos : new ArrayList<>();
     }
 
-    // Método para agregar un alumno a la salida
     public void agregarAlumno(Alumno alumno) {
-        if (alumnos.size() < 30) { // Capacidad máxima de pasajeros
-            alumnos.add(alumno);
-            System.out.println("Alumno agregado correctamente");
-        } else {
-            System.out.println("La capacidad de pasajeros está completa");
+        if (alumno == null) {
+            System.out.println("El alumno no es válido.");
+            return;
         }
+
+        if (alumnos.size() >= 30) {
+            System.out.println("La capacidad de pasajeros está completa.");
+            return;
+        }
+
+        for (Alumno existente : alumnos) {
+            if (existente.getDNI() == alumno.getDNI()) {
+                System.out.println("El alumno ya está registrado en esta salida.");
+                return;
+            }
+        }
+
+        alumnos.add(alumno);
+        System.out.println("Alumno agregado correctamente.");
     }
 
-    // Método para cambiar el destino
     public void cambiarDestino(String nuevoDestino) {
         this.destino = nuevoDestino;
-        System.out.println("Destino cambiado a: " + nuevoDestino);
     }
 
-    // Método para cambiar la fecha
     public void cambiarFecha(Date nuevaFecha) {
         this.fecha = nuevaFecha;
-        System.out.println("Fecha cambiada a: " + nuevaFecha);
     }
 
-    // Método para crear una nueva salida extracurricular
-    public void crearSalidaExtracurricular(String nuevoDestino, Date nuevaFecha, Chofer nuevoChofer, Docente nuevoDocente, ArrayList<Alumno> alumnosSalida) {
+    public void crearSalidaExtracurricular(
+            String nuevoDestino,
+            Date nuevaFecha,
+            Chofer nuevoChofer,
+            Docente nuevoDocente,
+            ArrayList<Alumno> alumnosSalida) {
+
         this.destino = nuevoDestino;
         this.fecha = nuevaFecha;
         this.chofer = nuevoChofer;
         this.docenteSalida = nuevoDocente;
-        System.out.println("Salida extracurricular creada correctamente");
+        this.alumnos = alumnosSalida != null
+                ? new ArrayList<>(alumnosSalida)
+                : new ArrayList<>();
     }
 
-    // Método para modificar una salida extracurricular existente
-    public void modificarSalidaExtracurricular(String nuevoDestino, Date nuevaFecha) {
+    public void modificarSalidaExtracurricular(
+            String nuevoDestino,
+            Date nuevaFecha) {
+
         this.destino = nuevoDestino;
         this.fecha = nuevaFecha;
-        System.out.println("Salida extracurricular modificada correctamente");
     }
 
-    // Método para eliminar una salida extracurricular
     public void eliminarSalidaExtracurricular() {
-        // Implementa la lógica para eliminar la salida extracurricular (por ejemplo, establecer atributos a null)
-        System.out.println("Salida extracurricular eliminada correctamente");
+        this.id = 0;
+        this.destino = null;
+        this.fecha = null;
+        this.chofer = null;
+        this.docenteSalida = null;
+        this.alumnos.clear();
     }
 
-    // Método para listar alumnos
     public void listarAlumnos() {
-        for (Alumno alumno : alumnos) {
-            System.out.println("Nombre: " + alumno.getNombre() + ", Apellido: " + alumno.getApellido() + ", DNI: " + alumno.getDNI());
+
+        if (alumnos == null || alumnos.isEmpty()) {
+            System.out.println("No hay alumnos registrados en esta salida.");
+            return;
         }
+
+        System.out.println("\n--- Alumnos de la Salida Extracurricular ---");
+
+        for (Alumno alumno : alumnos) {
+            System.out.println("-------------------------");
+            System.out.println("DNI: " + alumno.getDNI());
+            System.out.println("Nombre: " + alumno.getNombre());
+            System.out.println("Apellido: " + alumno.getApellido());
+            System.out.println("Curso: " + alumno.getCurso());
+        }
+
+        System.out.println("-------------------------");
     }
 }

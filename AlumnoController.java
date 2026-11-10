@@ -1,36 +1,33 @@
+
 package seminario;
 
 import java.util.List;
 
 public class AlumnoController {
 
-	public AlumnoController(AlumnoDAO alumnoDAO) {
-		// TODO Auto-generated constructor stub
-	}
+    private AlumnoDAO alumnoDAO;
 
-	public Alumno getAlumnoByDNI(int dni) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public AlumnoController(AlumnoDAO alumnoDAO) {
+        this.alumnoDAO = alumnoDAO;
+    }
 
-	public void addAlumno(Alumno nuevoAlumno) {
-		// TODO Auto-generated method stub
-		
-	}
+    public Alumno getAlumnoByDNI(int dni) {
+        return alumnoDAO.getAlumnoByDNI(dni);
+    }
 
-	public void updateAlumno(Alumno alumno) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void addAlumno(Alumno nuevoAlumno) {
+        alumnoDAO.addAlumno(nuevoAlumno);
+    }
 
-	public List<Alumno> getAllAlumnos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void updateAlumno(Alumno alumno) {
+        alumnoDAO.updateAlumno(alumno);
+    }
 
-	public void deleteAlumno(int dni) {
-		// TODO Auto-generated method stub
-		
-	}
+    public List<Alumno> getAllAlumnos() {
+        return alumnoDAO.getAllAlumnos();
+    }
 
+    public void deleteAlumno(int dni) {
+        alumnoDAO.deleteAlumno(dni);
+    }
 }
