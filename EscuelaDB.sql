@@ -1,83 +1,126 @@
-CREATE DATABASE Escuela;
+CREATE DATABASE IF NOT EXISTS Escuela
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
 USE Escuela;
 
-CREATE TABLE SalidaExtraurricular (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    destino VARCHAR(100),
-    fecha DATE
-);
+-- PRECEPTORA
+CREATE TABLE IF NOT EXISTS preceptora (
+    DNI INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    PRIMARY KEY (DNI)
+) ENGINE=InnoDB;
 
-CREATE TABLE Docente (
-    DNI INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    id_SalidaExtraurricular INT,
-    FOREIGN KEY (id_SalidaExtraurricular) REFERENCES SalidaExtraurricular(id)
-);
+-- AULA
+CREATE TABLE IF NOT EXISTS aula (
+    id INT NOT NULL AUTO_INCREMENT,
+    anio INT NOT NULL,
+    division VARCHAR(20) NOT NULL,
+    DNI_Preceptor INT DEFAULT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_aula_preceptora
+        FOREIGN KEY (DNI_Preceptor)
+        REFERENCES preceptora(DNI)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-CREATE TABLE Chofer (
-    DNI INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    id_SalidaExtraurricular INT,
-    FOREIGN KEY (id_SalidaExtraurricular) REFERENCES SalidaExtraurricular(id)
-);
+-- DOCENTE
+CREATE TABLE IF NOT EXISTS docente (
+    DNI INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    id_Aula INT DEFAULT NULL,
+    PRIMARY KEY (DNI),
+    CONSTRAINT fk_docente_aula
+        FOREIGN KEY (id_Aula)
+        REFERENCES aula(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-CREATE TABLE Preceptora (
-    DNI INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100)
-);
+-- CHOFER
+CREATE TABLE IF NOT EXISTS chofer (
+    DNI INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    PRIMARY KEY (DNI)
+) ENGINE=InnoDB;
 
-CREATE TABLE Aula (
-    id INT PRIMARY KEY,
-    año INT,
-    grado VARCHAR(100),
-    DNI_Preceptor INT,
-    FOREIGN KEY (DNI_Preceptor) REFERENCES Preceptora(DNI)
-);
+-- ALUMNO
+CREATE TABLE IF NOT EXISTS alumno (
+    DNI INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    DNI_Preceptora INT DEFAULT NULL,
+    id_Aula INT DEFAULT NULL,
+    fechaNacimiento DATE NOT NULL,
+    curso VARCHAR(50) NOT NULL,
+    PRIMARY KEY (DNI),
+    CONSTRAINT fk_alumno_preceptora
+        FOREIGN KEY (DNI_Preceptora)
+        REFERENCES preceptora(DNI)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_alumno_aula
+        FOREIGN KEY (id_Aula)
+        REFERENCES aula(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-CREATE TABLE Alumno (
-    DNI INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    DNI_Preceptora INT,
-    id_Aula INT,
-    fechaNacimiento DATE,
-    curso VARCHAR(100),  -- Agregar columna curso
-    FOREIGN KEY (DNI_Preceptora) REFERENCES Preceptora(DNI),
-    FOREIGN KEY (id_Aula) REFERENCES Aula(id)
-);
+-- FICHA MEDICA
+CREATE TABLE IF NOT EXISTS fichamedica (
+    id INT NOT NULL AUTO_INCREMENT,
+    historial TEXT DEFAULT NULL,
+    alergias VARCHAR(255) DEFAULT NULL,
+    emergenciaNombre VARCHAR(150) DEFAULT NULL,
+    emergenciaNro VARCHAR(30) DEFAULT NULL,
+    tipoSangre VARCHAR(10) DEFAULT NULL,
+    DNI_Alumno INT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY DNI_Alumno (DNI_Alumno),
+    CONSTRAINT fk_ficha_alumno
+        FOREIGN KEY (DNI_Alumno)
+        REFERENCES alumno(DNI)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-CREATE TABLE FichaMedica (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    alergia VARCHAR(255),
-    tiposangre VARCHAR(50),
-    contacto_emergencia VARCHAR(255),
-    DNI_Alumno INT,
-    FOREIGN KEY (DNI_Alumno) REFERENCES Alumno(DNI)
-);
+-- SALIDA EXTRACURRICULAR
+CREATE TABLE IF NOT EXISTS salidaextracurricular (
+    id INT NOT NULL AUTO_INCREMENT,
+    destino VARCHAR(100) NOT NULL,
+    fecha DATE NOT NULL,
+    DNI_Docente INT DEFAULT NULL,
+    DNI_Chofer INT DEFAULT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_salida_docente
+        FOREIGN KEY (DNI_Docente)
+        REFERENCES docente(DNI)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_salida_chofer
+        FOREIGN KEY (DNI_Chofer)
+        REFERENCES chofer(DNI)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-ALTER TABLE Docente
-ADD COLUMN id_Aula INT,
-ADD FOREIGN KEY (id_Aula) REFERENCES Aula(id);
-
-INSERT INTO Preceptora (DNI, nombre, apellido) 
-    VALUES (1, 'Maria', 'Gomez'), (2, 'Juan', 'Perez');
-INSERT INTO Aula (id, año, grado, DNI_Preceptor) 
-    VALUES (1, 2024, '1A', 1), (2, 2024, '2B', 2);
-INSERT INTO Alumno (DNI, nombre, apellido, DNI_Preceptora, id_Aula, fechaNacimiento, curso) 
-    VALUES (40165312, 'Pedro', 'Lopez', 1, 1, '2010-01-01', '1A'), (50215659, 'Ana', 'Martinez', 2, 2, '2011-02-02', '2B');
-INSERT INTO FichaMedica (id, alergia, tiposangre, contacto_emergencia, DNI_Alumno) 
-    VALUES (1, 'Polen', 'A+', '123456789', 40165312), (2, 'Ninguna', 'O-', '987654321', 50215659);
-INSERT INTO SalidaExtraurricular (id, destino, fecha) 
-    VALUES (1, 'Museo', '2024-05-01'), (2, 'Zoo', '2024-05-02');
-INSERT INTO Docente (DNI, nombre, apellido, id_Aula) 
-    VALUES (1, 'Carlos', 'Rodriguez', 1), (2, 'Laura', 'Gonzalez', 2);
-INSERT INTO Chofer (DNI, nombre, apellido) 
-    VALUES (1, 'Roberto', 'Sanchez'), (2, 'Carmen', 'Diaz');
-
-SELECT * FROM Alumno WHERE DNI_Preceptora = 1;
-SELECT * FROM Docente WHERE id_Aula = 1;
-SELECT * FROM FichaMedica WHERE DNI_Alumno = 1;
-SELECT * FROM Alumno;
+-- RELACION ENTRE ALUMNOS Y SALIDAS
+CREATE TABLE IF NOT EXISTS alumno_salida (
+    id_Salida INT NOT NULL,
+    DNI_Alumno INT NOT NULL,
+    PRIMARY KEY (id_Salida, DNI_Alumno),
+    CONSTRAINT fk_alumno_salida_alumno
+        FOREIGN KEY (DNI_Alumno)
+        REFERENCES alumno(DNI)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_alumno_salida_salida
+        FOREIGN KEY (id_Salida)
+        REFERENCES salidaextracurricular(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
