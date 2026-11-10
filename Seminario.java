@@ -297,51 +297,63 @@ private static void eliminarDocente(
 
     // ADMINISTRACIÓN DE ALUMNOS
 
-    private static void administrarAlumnos(
-            Scanner scanner,
-            AlumnoController alumnoController,
-            AlumnoView alumnoView) {
+    
+private static void administrarAlumnos(
+        Scanner scanner,
+        AlumnoController alumnoController,
+        AlumnoView alumnoView) {
 
-        System.out.println("\n--- Administrar Alumnos ---");
-        System.out.println("1. Agregar Alumno");
-        System.out.println("2. Modificar Datos Personales");
-        System.out.println("3. Consultar Datos de Alumno");
-        System.out.println("4. Eliminar Alumno");
-        System.out.println("5. Listar Todos los Alumnos");
-        System.out.print("Ingrese la opción deseada: ");
+    System.out.println("\n--- Administrar Alumnos ---");
+    System.out.println("1. Agregar Alumno");
+    System.out.println("2. Modificar Datos Personales");
+    System.out.println("3. Consultar Datos de Alumno");
+    System.out.println("4. Eliminar Alumno");
+    System.out.println("5. Listar Todos los Alumnos");
+    System.out.println("6. Consultar Ficha Médica");
+    System.out.println("7. Modificar Ficha Médica");
+    System.out.print("Ingrese la opción deseada: ");
 
-        try {
-            int opcion = Integer.parseInt(scanner.nextLine());
+    try {
+        int opcion = Integer.parseInt(scanner.nextLine());
 
-            switch (opcion) {
-                case 1:
-                    agregarAlumno(scanner, alumnoController);
-                    break;
+        switch (opcion) {
+            case 1:
+                agregarAlumno(scanner, alumnoController);
+                break;
 
-                case 2:
-                    modificarDatosPersonales(scanner, alumnoController);
-                    break;
+            case 2:
+                modificarDatosPersonales(scanner, alumnoController);
+                break;
 
-                case 3:
-                    consultarDatosAlumno(scanner, alumnoController, alumnoView);
-                    break;
+            case 3:
+                consultarDatosAlumno(scanner, alumnoController, alumnoView);
+                break;
 
-                case 4:
-                    eliminarAlumno(scanner, alumnoController);
-                    break;
+            case 4:
+                eliminarAlumno(scanner, alumnoController);
+                break;
 
-                case 5:
-                    listarTodosLosAlumnos(alumnoController, alumnoView);
-                    break;
+            case 5:
+                listarTodosLosAlumnos(alumnoController, alumnoView);
+                break;
 
-                default:
-                    System.out.println("Opción no válida.");
-            }
+            case 6:
+                consultarFichaMedica(scanner, alumnoController);
+                break;
 
-        } catch (NumberFormatException e) {
-            System.out.println("Por favor, ingrese una opción numérica.");
+            case 7:
+                modificarFichaMedica(scanner, alumnoController);
+                break;
+
+            default:
+                System.out.println("Opción no válida.");
         }
+
+    } catch (NumberFormatException e) {
+        System.out.println("Por favor, ingrese una opción numérica.");
     }
+}
+
 
     private static void agregarAlumno(
             Scanner scanner,
@@ -500,6 +512,112 @@ private static void consultarDatosAlumno(
         System.out.println("Detalle: " + e.getMessage());
     }
 }
+
+
+private static void consultarFichaMedica(
+        Scanner scanner,
+        AlumnoController alumnoController) {
+
+    try {
+        System.out.print("\nIngrese el DNI del alumno: ");
+        int dni = Integer.parseInt(scanner.nextLine());
+
+        Alumno alumno = alumnoController.getAlumnoByDNI(dni);
+
+        if (alumno == null) {
+            System.out.println("Alumno no encontrado.");
+            return;
+        }
+
+        FichaMedica ficha = alumno.getFichaMedica();
+
+        if (ficha == null) {
+            System.out.println("El alumno no tiene una ficha médica registrada.");
+            return;
+        }
+
+        System.out.println("\n--- Ficha Médica del Alumno ---");
+        System.out.println("Alumno: " + alumno.getNombre() + " " + alumno.getApellido());
+        System.out.println("DNI: " + alumno.getDNI());
+        System.out.println("Historial médico: " + ficha.getHistorial());
+        System.out.println("Alergias: " + ficha.getAlergias());
+        System.out.println("Contacto de emergencia: " + ficha.getEmergenciaNombre());
+        System.out.println("Número de emergencia: " + ficha.getEmergenciaNro());
+        System.out.println("Tipo de sangre: " + ficha.getTipoSangre());
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI debe contener únicamente números.");
+
+    } catch (RuntimeException e) {
+        System.out.println("No se pudo consultar la ficha médica.");
+        System.out.println("Detalle: " + e.getMessage());
+    }
+}
+
+private static void modificarFichaMedica(
+        Scanner scanner,
+        AlumnoController alumnoController) {
+
+    try {
+        System.out.print("\nIngrese el DNI del alumno: ");
+        int dni = Integer.parseInt(scanner.nextLine());
+
+        Alumno alumno = alumnoController.getAlumnoByDNI(dni);
+
+        if (alumno == null) {
+            System.out.println("Alumno no encontrado.");
+            return;
+        }
+
+        FichaMedica ficha = alumno.getFichaMedica();
+
+        if (ficha == null) {
+            System.out.println("El alumno todavía no tiene una ficha médica.");
+            System.out.print("¿Desea crear una ficha médica? (S/N): ");
+
+            String respuesta = scanner.nextLine();
+
+            if (!respuesta.equalsIgnoreCase("S")) {
+                System.out.println("Operación cancelada.");
+                return;
+            }
+
+            ficha = new FichaMedica();
+        }
+
+        System.out.println("\n--- Modificar Ficha Médica ---");
+        System.out.println("Alumno: " + alumno.getNombre() + " " + alumno.getApellido());
+
+        System.out.print("Nuevo historial médico: ");
+        ficha.setHistorial(scanner.nextLine());
+
+        System.out.print("Nuevas alergias: ");
+        ficha.setAlergias(scanner.nextLine());
+
+        System.out.print("Nuevo contacto de emergencia: ");
+        ficha.setEmergenciaNombre(scanner.nextLine());
+
+        System.out.print("Nuevo número de emergencia: ");
+        ficha.setEmergenciaNro(Integer.parseInt(scanner.nextLine()));
+
+        System.out.print("Nuevo tipo de sangre: ");
+        ficha.setTipoSangre(scanner.nextLine());
+
+        alumno.setFichaMedica(ficha);
+
+        alumnoController.updateAlumno(alumno);
+
+        System.out.println("\nFicha médica actualizada correctamente.");
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI y el número de emergencia deben contener únicamente números.");
+
+    } catch (RuntimeException e) {
+        System.out.println("No se pudo modificar la ficha médica.");
+        System.out.println("Detalle: " + e.getMessage());
+    }
+}
+
     private static void eliminarAlumno(
             Scanner scanner,
             AlumnoController alumnoController) {
