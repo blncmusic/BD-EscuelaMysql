@@ -1,3 +1,4 @@
+
 package seminario;
 
 import java.sql.Connection;
@@ -27,7 +28,8 @@ public class AlumnoDAO {
             System.out.println("Alumno agregado correctamente.");
 
         } catch (SQLException e) {
-            System.out.println("Error al agregar alumno: " + e.getMessage());
+            throw new RuntimeException(
+                    "Error al agregar el alumno en la base de datos: " + e.getMessage(), e);
         }
     }
 
@@ -55,7 +57,8 @@ public class AlumnoDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al consultar alumno: " + e.getMessage());
+            throw new RuntimeException(
+                    "Error al consultar el alumno en la base de datos: " + e.getMessage(), e);
         }
 
         return null;
@@ -83,7 +86,8 @@ public class AlumnoDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al listar alumnos: " + e.getMessage());
+            throw new RuntimeException(
+                    "Error al listar los alumnos de la base de datos: " + e.getMessage(), e);
         }
 
         return alumnos;
@@ -111,7 +115,8 @@ public class AlumnoDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al modificar alumno: " + e.getMessage());
+            throw new RuntimeException(
+                    "Error al modificar el alumno en la base de datos: " + e.getMessage(), e);
         }
     }
 
@@ -133,7 +138,8 @@ public class AlumnoDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al eliminar alumno: " + e.getMessage());
+            throw new RuntimeException(
+                    "Error al eliminar el alumno de la base de datos: " + e.getMessage(), e);
         }
     }
 }
