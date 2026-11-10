@@ -14,6 +14,7 @@ public class SalidaDAO {
 
     private final AlumnoDAO alumnoDAO = new AlumnoDAO();
     private final ChoferDAO choferDAO = new ChoferDAO();
+    private final DocenteDAO docenteDAO = new DocenteDAO();
 
     // Registrar una salida y sus alumnos
     public boolean addSalida(SalidaExtracurricular salida) {
@@ -130,12 +131,9 @@ public class SalidaDAO {
                     Chofer chofer = choferNulo
                             ? null : choferDAO.getChoferByDNI(dniChofer);
 
-                    Docente docente = null;
-
-                    if (!docenteNulo) {
-                        docente = new Docente();
-                        docente.setDNI(dniDocente);
-                    }
+                    Docente docente = docenteNulo
+                            ? null
+                            : docenteDAO.getDocenteByDNI(dniDocente);
 
                     ArrayList<Alumno> alumnos = obtenerAlumnos(conn, id);
 

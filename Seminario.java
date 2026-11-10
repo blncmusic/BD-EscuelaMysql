@@ -14,11 +14,13 @@ public class Seminario {
         Scanner scanner = new Scanner(System.in);
 
         SalidaDAO salidaDAO = new SalidaDAO();
+
         AlumnoDAO alumnoDAO = new AlumnoDAO();
         AlumnoController alumnoController = new AlumnoController(alumnoDAO);
         AlumnoView alumnoView = new AlumnoView();
 
         ChoferDAO choferDAO = new ChoferDAO();
+        DocenteDAO docenteDAO = new DocenteDAO();
 
         boolean continuar = true;
 
@@ -27,7 +29,8 @@ public class Seminario {
             System.out.println("1. Administrar Alumnos");
             System.out.println("2. Gestionar Salida Extracurricular");
             System.out.println("3. Administrar Choferes");
-            System.out.println("4. Salir");
+            System.out.println("4. Administrar Docentes");
+            System.out.println("5. Salir");
             System.out.print("Ingrese la opción deseada: ");
             try {
                 int opcion = Integer.parseInt(scanner.nextLine());
@@ -39,7 +42,7 @@ public class Seminario {
 
                     case 2:
                         gestionarSalidaExtracurricular(
-                                scanner, salidaDAO, choferDAO,
+                                scanner, salidaDAO, choferDAO, docenteDAO,
                                 alumnoController, alumnoView
                         );
                         break;
@@ -49,6 +52,10 @@ public class Seminario {
                         break;
 
                     case 4:
+                        administrarDocentes(scanner, docenteDAO);
+                        break;
+
+                    case 5:
                         System.out.println("¡Hasta luego!");
                         continuar = false;
                         break;
@@ -68,6 +75,225 @@ public class Seminario {
 
         scanner.close();
     }
+
+
+
+// ADMINISTRACIÓN DE DOCENTES
+
+private static void administrarDocentes(
+        Scanner scanner,
+        DocenteDAO docenteDAO) {
+
+    int opcion = 0;
+
+    while (opcion != 6) {
+        System.out.println("\n--- Administrar Docentes ---");
+        System.out.println("1. Registrar Docente");
+        System.out.println("2. Consultar Docente");
+        System.out.println("3. Listar Docentes");
+        System.out.println("4. Modificar Docente");
+        System.out.println("5. Eliminar Docente");
+        System.out.println("6. Volver al Menú Principal");
+        System.out.print("Ingrese la opción deseada: ");
+
+        try {
+            opcion = Integer.parseInt(scanner.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    registrarDocente(scanner, docenteDAO);
+                    break;
+
+                case 2:
+                    consultarDocente(scanner, docenteDAO);
+                    break;
+
+                case 3:
+                    listarDocentes(docenteDAO);
+                    break;
+
+                case 4:
+                    modificarDocente(scanner, docenteDAO);
+                    break;
+
+                case 5:
+                    eliminarDocente(scanner, docenteDAO);
+                    break;
+
+                case 6:
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese un número válido.");
+        } catch (RuntimeException e) {
+            System.out.println("Error al administrar docentes: " + e.getMessage());
+        }
+    }
+}
+
+// REGISTRAR DOCENTE
+
+private static void registrarDocente(
+        Scanner scanner,
+        DocenteDAO docenteDAO) {
+
+    try {
+        System.out.println("\n--- Registrar Docente ---");
+
+        System.out.print("Nombre: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Apellido: ");
+        String apellido = scanner.nextLine();
+
+        System.out.print("DNI: ");
+        int dni = Integer.parseInt(scanner.nextLine());
+
+        if (docenteDAO.getDocenteByDNI(dni) != null) {
+            System.out.println("Ya existe un docente con ese DNI.");
+            return;
+        }
+
+        Docente docente = new Docente(nombre, apellido, dni);
+        docenteDAO.addDocente(docente);
+
+        System.out.println("Docente registrado correctamente.");
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI debe contener únicamente números.");
+    }
+}
+
+// CONSULTAR DOCENTE
+
+private static void consultarDocente(
+        Scanner scanner,
+        DocenteDAO docenteDAO) {
+
+    try {
+        System.out.print("\nIngrese el DNI del docente: ");
+        int dni = Integer.parseInt(scanner.nextLine());
+
+        Docente docente = docenteDAO.getDocenteByDNI(dni);
+
+        if (docente == null) {
+            System.out.println("Docente no encontrado.");
+            return;
+        }
+
+        System.out.println("\n--- Datos del Docente ---");
+        System.out.println("DNI: " + docente.getDNI());
+        System.out.println("Nombre: " + docente.getNombre());
+        System.out.println("Apellido: " + docente.getApellido());
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI debe contener únicamente números.");
+    }
+}
+
+// LISTAR DOCENTES
+
+private static void listarDocentes(DocenteDAO docenteDAO) {
+
+    List<Docente> docentes = docenteDAO.getAllDocentes();
+
+    if (docentes.isEmpty()) {
+        System.out.println("No hay docentes registrados.");
+        return;
+    }
+
+    System.out.println("\n--- Docentes Registrados ---");
+
+    for (Docente docente : docentes) {
+        System.out.println("-------------------------");
+        System.out.println("DNI: " + docente.getDNI());
+        System.out.println("Nombre: " + docente.getNombre());
+        System.out.println("Apellido: " + docente.getApellido());
+    }
+
+    System.out.println("-------------------------");
+}
+
+// MODIFICAR DOCENTE
+
+private static void modificarDocente(
+        Scanner scanner,
+        DocenteDAO docenteDAO) {
+
+    try {
+        System.out.print("\nIngrese el DNI del docente a modificar: ");
+        int dniOriginal = Integer.parseInt(scanner.nextLine());
+
+        Docente docente = docenteDAO.getDocenteByDNI(dniOriginal);
+
+        if (docente == null) {
+            System.out.println("Docente no encontrado.");
+            return;
+        }
+
+        System.out.print("Nuevo nombre: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Nuevo apellido: ");
+        String apellido = scanner.nextLine();
+
+        System.out.print("Nuevo DNI: ");
+        int nuevoDNI = Integer.parseInt(scanner.nextLine());
+
+        Docente existente = docenteDAO.getDocenteByDNI(nuevoDNI);
+
+        if (existente != null && nuevoDNI != dniOriginal) {
+            System.out.println("Ya existe otro docente con ese DNI.");
+            return;
+        }
+
+        Docente modificado = new Docente(nombre, apellido, nuevoDNI);
+
+        docenteDAO.updateDocente(dniOriginal, modificado);
+
+        System.out.println("Docente modificado correctamente.");
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI debe contener únicamente números.");
+    }
+}
+
+// ELIMINAR DOCENTE
+
+private static void eliminarDocente(
+        Scanner scanner,
+        DocenteDAO docenteDAO) {
+
+    try {
+        System.out.print("\nIngrese el DNI del docente a eliminar: ");
+        int dni = Integer.parseInt(scanner.nextLine());
+
+        Docente docente = docenteDAO.getDocenteByDNI(dni);
+
+        if (docente == null) {
+            System.out.println("Docente no encontrado.");
+            return;
+        }
+
+        System.out.print("¿Confirma la eliminación? (S/N): ");
+        String confirmacion = scanner.nextLine();
+
+        if (confirmacion.equalsIgnoreCase("S")) {
+            docenteDAO.deleteDocente(dni);
+            System.out.println("Docente eliminado correctamente.");
+        } else {
+            System.out.println("Operación cancelada.");
+        }
+
+    } catch (NumberFormatException e) {
+        System.out.println("El DNI debe contener únicamente números.");
+    }
+}
 
     // ADMINISTRACIÓN DE ALUMNOS
 
@@ -543,11 +769,12 @@ private static void consultarDatosAlumno(
     // GESTIÓN DE SALIDAS EXTRACURRICULARES
 
     private static void gestionarSalidaExtracurricular(
-            Scanner scanner,
-            SalidaDAO salidaDAO,
-            ChoferDAO choferDAO,
-            AlumnoController alumnoController,
-            AlumnoView alumnoView) {
+        Scanner scanner,
+        SalidaDAO salidaDAO,
+        ChoferDAO choferDAO,
+        DocenteDAO docenteDAO,
+        AlumnoController alumnoController,
+        AlumnoView alumnoView) {
 
         int opcion = 0;
 
@@ -569,7 +796,7 @@ private static void consultarDatosAlumno(
                 switch (opcion) {
                     case 1:
                         crearSalidaExtracurricular(
-                                scanner, salidaDAO, choferDAO,
+                                scanner, salidaDAO, choferDAO, docenteDAO,
                                 alumnoController);
                         break;
 
@@ -619,10 +846,11 @@ private static void consultarDatosAlumno(
     // CREAR SALIDA
 
     private static void crearSalidaExtracurricular(
-            Scanner scanner,
-            SalidaDAO salidaDAO,
-            ChoferDAO choferDAO,
-            AlumnoController alumnoController) {
+        Scanner scanner,
+        SalidaDAO salidaDAO,
+        ChoferDAO choferDAO,
+        DocenteDAO docenteDAO,
+        AlumnoController alumnoController) {
 
         try {
             System.out.println("\n--- Crear Salida Extracurricular ---");
@@ -642,7 +870,17 @@ private static void consultarDatosAlumno(
                 System.out.println("Chofer no encontrado. No se pudo crear la salida.");
                 return;
             }
+            
+            System.out.print("DNI del docente responsable: ");
+            int dniDocente = Integer.parseInt(scanner.nextLine());
 
+            Docente docente = docenteDAO.getDocenteByDNI(dniDocente);
+
+            if (docente == null) {
+                System.out.println(
+                        "Docente no encontrado. No se pudo crear la salida.");
+                return;
+            }
             System.out.println("\nIngrese los DNI de los alumnos participantes.");
             System.out.println("Para finalizar, ingrese -1.");
             System.out.println("La capacidad máxima es de 30 alumnos.");
@@ -675,7 +913,7 @@ private static void consultarDatosAlumno(
             }
 
             nuevaSalida.crearSalidaExtracurricular(
-                    destino, fecha, chofer, null,
+                    destino, fecha, chofer, docente,
                     nuevaSalida.getAlumnos());
 
             if (salidaDAO.addSalida(nuevaSalida)) {
@@ -715,6 +953,15 @@ private static void consultarDatosAlumno(
                         + salida.getChofer().getApellido());
             } else {
                 System.out.println("Chofer: No asignado");
+            }
+
+            if (salida.getDocenteSalida() != null) {
+    System.out.println("Docente responsable: "
+            + salida.getDocenteSalida().getNombre() + " "
+            + salida.getDocenteSalida().getApellido()
+            + " (DNI: " + salida.getDocenteSalida().getDNI() + ")");
+            } else {
+                System.out.println("Docente responsable: No asignado");
             }
 
             System.out.println("Cantidad de alumnos: "
