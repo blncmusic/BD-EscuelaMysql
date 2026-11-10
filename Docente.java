@@ -7,14 +7,13 @@ package seminario;
 
 
 public class Docente extends Persona {
-    private String [] aulasAsignadas;
+    private String[] aulasAsignadas = new String[10];
 
     public Docente() {
     }
     
     public Docente (String nombre, String apellido, int dni) {
-        super (nombre, apellido, dni);
-        this.aulasAsignadas = new String [10];
+        super (nombre, apellido, dni);    
     }
     
     public void asignarAula(String aula) {
