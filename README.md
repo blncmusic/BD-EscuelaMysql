@@ -1,18 +1,95 @@
-## Getting Started
+# Sistema de Gestión Escolar
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Descripción del proyecto
 
-## Folder Structure
+Este proyecto consiste en el desarrollo de un sistema de gestión escolar realizado en Java, conectado a una base de datos MySQL. Su objetivo es facilitar la administración de la información de alumnos, docentes, choferes y salidas extracurriculares, permitiendo registrar, consultar, modificar y eliminar datos de manera persistente.
 
-The workspace contains two folders by default, where:
+El sistema utiliza una interfaz de consola para que el usuario pueda interactuar con las distintas funcionalidades mediante menús.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Tecnologías utilizadas
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- **Java:** lenguaje utilizado para desarrollar la lógica del sistema.
+- **MySQL:** sistema gestor de bases de datos.
+- **JDBC:** tecnología utilizada para establecer la conexión entre Java y MySQL.
+- **XAMPP:** entorno utilizado para ejecutar el servidor MySQL.
+- **Visual Studio Code:** entorno de desarrollo.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Funcionalidades principales
 
-## Dependency Management
+### Administración de alumnos
+- Registrar alumnos.
+- Consultar alumnos por DNI.
+- Listar alumnos.
+- Modificar información.
+- Eliminar registros.
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+### Administración de docentes
+- Registrar docentes.
+- Consultar docentes por DNI.
+- Listar docentes.
+- Modificar información.
+- Eliminar docentes.
+
+### Administración de choferes
+- Registrar choferes.
+- Consultar choferes por DNI.
+- Listar choferes.
+- Modificar información.
+- Eliminar choferes.
+
+### Gestión de salidas extracurriculares
+- Crear salidas indicando destino y fecha.
+- Asignar un docente y un chofer.
+- Incorporar alumnos a una salida.
+- Consultar las salidas registradas.
+- Modificar información de las salidas.
+- Eliminar salidas.
+- Consultar los alumnos asociados a cada salida.
+
+## Arquitectura y diseño
+
+El proyecto utiliza una organización basada en el patrón DAO (Data Access Object), que permite separar las operaciones de acceso a datos de la lógica de la aplicación.
+
+También incorpora una estructura inspirada en MVC (Modelo-Vista-Controlador) en el módulo de alumnos, separando las responsabilidades de representación, control y acceso a datos.
+
+Se aplican conceptos de programación orientada a objetos, como encapsulamiento, herencia, abstracción y polimorfismo.
+
+## Base de datos
+
+La base de datos utilizada se denomina `Escuela` y está desarrollada en MySQL.
+
+Incluye las siguientes tablas:
+
+- alumno
+- docente
+- chofer
+- preceptora
+- aula
+- fichamedica
+- salidaextracurricular
+- alumno_salida
+
+La relación entre alumnos y salidas extracurriculares se implementa mediante una tabla intermedia, permitiendo asociar varios alumnos a una misma salida.
+
+## Requisitos para ejecutar el proyecto
+
+- Java JDK.
+- MySQL.
+- XAMPP o un servidor MySQL equivalente.
+- Visual Studio Code u otro entorno compatible con Java.
+- MySQL Connector/J.
+
+## Instalación y ejecución
+
+1. Iniciar el servicio MySQL desde XAMPP.
+2. Crear la base de datos importando el archivo `EscuelaDB.sql` desde phpMyAdmin, si se trata de una instalación nueva.
+3. Verificar los parámetros de conexión configurados en `DatabaseConnection.java`.
+4. Incorporar el controlador MySQL Connector/J al classpath del proyecto.
+5. Compilar los archivos Java.
+6. Ejecutar la clase principal `Seminario.java`.
+
+**Importante:** si ya existe una base de datos con información, no es necesario volver a importarla para ejecutar el programa. El script de creación utiliza `IF NOT EXISTS` y no reemplaza la estructura de las tablas existentes.
+
+## Autor
+
+Proyecto académico desarrollado como parte de la asignatura Seminario, utilizando Java y MySQL.
